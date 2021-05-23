@@ -1,5 +1,7 @@
 # hpc_lecture
 
+## 20M14457 ZHANG XINJIE
+
 |          | Topic                                | Sample code               |
 | -------- | ------------------------------------ | ------------------------- |
 | Class 1  | Introduction to parallel programming |                           |
