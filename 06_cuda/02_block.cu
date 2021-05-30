@@ -2,7 +2,7 @@
 
 __global__ void block(float *a, int N) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
-  if(i>=N) return;
+  if(i>=N) return;//Without it, num of threads is 2048
   a[i] = i;
 }
 

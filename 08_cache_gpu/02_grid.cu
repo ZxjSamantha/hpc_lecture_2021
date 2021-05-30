@@ -5,7 +5,7 @@
 using namespace std;
 
 __global__ void matmul(float *A, float *B, float *C, int N) {
-  int i = blockIdx.y;
+  int i = blockIdx.y;// Use 2D grids
   int j = threadIdx.x + blockDim.x * blockIdx.x;
   float sum = 0;
   for (int k=0; k<N; k++) {

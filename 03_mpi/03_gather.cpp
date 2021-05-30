@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   int begin = rank * (N / size);
   int end = (rank + 1) * (N / size);
-  srand48(rank);
+  srand48(rank); // different rank make different random number 
   for(int i=begin; i<end; i++) {
     x0[i] = drand48();
     y0[i] = drand48();
@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
   MPI_Gather( &m0[begin], end-begin, MPI_DOUBLE,  m, end-begin, MPI_DOUBLE, 0, MPI_COMM_WORLD);
   MPI_Gather(&fx0[begin], end-begin, MPI_DOUBLE, fx, end-begin, MPI_DOUBLE, 0, MPI_COMM_WORLD);
   MPI_Gather(&fy0[begin], end-begin, MPI_DOUBLE, fy, end-begin, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+  //recvrank: the rank receives all messages
   if(rank == 0) {
     for(int i=0; i<N; i++) {
       for(int j=0; j<N; j++) {

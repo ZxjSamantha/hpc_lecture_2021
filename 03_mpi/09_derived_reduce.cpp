@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
   }
   Body body[N];
   MPI_Datatype MPI_BODY;
-  MPI_Type_contiguous(5, MPI_DOUBLE, &MPI_BODY);
+  MPI_Type_contiguous(5, MPI_DOUBLE, &MPI_BODY);//distributed -> gather 
   MPI_Type_commit(&MPI_BODY);
   MPI_Allgather(&body0[begin], end-begin, MPI_BODY, body, end-begin, MPI_BODY, MPI_COMM_WORLD);
   for(int i=0; i<N; i++) {

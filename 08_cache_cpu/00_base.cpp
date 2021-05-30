@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <vector>
-#include <chrono>
+#include <chrono>//？
 using namespace std;
 typedef vector<vector<float>> matrix;
 
@@ -25,7 +25,7 @@ int main() {
       C[i][j] = 0;
     }
   }
-  auto tic = chrono::steady_clock::now();
+  auto tic = chrono::steady_clock::now();// start count time 
   matmult(A,B,C,N);
   auto toc = chrono::steady_clock::now();
   double time = chrono::duration<double>(toc - tic).count();

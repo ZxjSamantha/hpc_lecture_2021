@@ -37,7 +37,7 @@ void matmult(matrix &A, matrix &B, matrix &C, int N) {
           for (int ir=0; ir<mc; ir+=mr) {
             for (int kr=0; kr<kc; kr++) {
               for (int i=ir; i<ir+mr; i++) {
-		__m256 Avec = _mm256_broadcast_ss(Ac+i*kc+kr);
+		__m256 Avec = _mm256_broadcast_ss(Ac+i*kc+kr);// -march=native 
                 for (int j=jr; j<jr+nr; j+=8) {
                   __m256 Bvec = _mm256_load_ps(Bc+kr*nc+j);
                   __m256 Cvec = _mm256_load_ps(Cc+i*nc+j);

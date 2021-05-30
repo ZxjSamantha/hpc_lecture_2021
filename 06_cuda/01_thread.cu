@@ -5,7 +5,7 @@ __global__ void thread(float *a) {
 }
 
 int main(void) {
-  const int N = 4;
+  const int N = 2048;// How large could N be? 
   float *a;
   cudaMallocManaged(&a, N*sizeof(float));
   thread<<<1,N>>>(a);

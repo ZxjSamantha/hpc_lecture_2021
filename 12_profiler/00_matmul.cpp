@@ -7,7 +7,7 @@
 #include "timers.h"
 
 using namespace std;
-typedef vector<vector<float>> matrix;
+typedef vector<vector<float> > matrix;
 
 void matmult(matrix &A, matrix &B, matrix &C, int N) {
   const int m = N, n = N, k = N;

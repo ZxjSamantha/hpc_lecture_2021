@@ -5,7 +5,9 @@
 #include <cmath>
 #include <vector>
 #include <chrono> // time 
+#include <immintrin.h>
 using namespace std;
+//bash 00_run.sh 
 
 int main(int argc, char** argv) {
   int size, rank;
@@ -22,19 +24,24 @@ int main(int argc, char** argv) {
   vector<float> subC(N*N/size, 0);
   
   //#pragma omp parallel for num_threads(4)
+  #pragma omp parallel for collapse(2)
   for (int i=0; i<N; i++) {
     for (int j=0; j<N; j++) {
       A[N*i+j] = drand48();
       B[N*i+j] = drand48();
     }
   }
+
+
   int offset = N/size*rank; // begin = rank * (N/size) end = (rank + 1) * (N/size)
   
 /* Parallel Section? */
 #pragma omp parallel
 {
-  #pragma omp sections
+  //int i,j; 
+  #pragma omp sections 
   {
+    //#pragma omp for parallel collapse(2)
     for (int i=0; i<N/size; i++){
       for (int j=0; j<N; j++){
         subA[N*i+j] = A[N*(i+offset)+j];
@@ -63,22 +70,22 @@ int main(int argc, char** argv) {
     #pragma omp parallel
     {
       int ic, jc, kc;
-      #pragma omp for 
+      #pragma omp for collapse(2)
       for (ic=0; ic<N/size; ic++){
         for (jc=0; jc<N/size; jc++){
-          double temp = 0; 
+          double temp = 0;
+          /*reduction(+:temp) doesn't work well*/ 
+          //#pragma omp parallel for reduction(+:temp)
           for (kc=0; kc<N; kc++){
             temp += subA[N*ic+kc] * subB[N/size*kc+jc];
             //subC[N*i+j+offset] += subA[N*i+k] * subB[N/size*k+j];
-          }  
+            }  
           subC[N*ic+jc+offset] = temp; 
         }
       }
     }
     auto toc = chrono::steady_clock::now();
     comp_time += chrono::duration<double>(toc - tic).count();
-    //MPI_Request request[2];
-    //MPI_Isend()
     MPI_Send(&subB[0], N*N/size, MPI_FLOAT, send_to, 0, MPI_COMM_WORLD);
     MPI_Recv(&subB[0], N*N/size, MPI_FLOAT, recv_from, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     tic = chrono::steady_clock::now();
@@ -86,9 +93,9 @@ int main(int argc, char** argv) {
   }
   MPI_Allgather(&subC[0], N*N/size, MPI_FLOAT, &C[0], N*N/size, MPI_FLOAT, MPI_COMM_WORLD);
   
-  omp_set_num_threads(4);
+  omp_set_num_threads(4); // seems not matter? 
   
-  #pragma omp parallel for
+  #pragma omp parallel for 
   for (int i=0; i<N; i++){
     for (int j=0; j<N; j++){
     //for (int k=0; k<N; k++)

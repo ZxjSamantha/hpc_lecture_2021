@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <chrono>
 using namespace std;
+// Need a node to run!!!
 
 __global__ void matmul(float *A, float *B, float *C, int N) {
   int i = blockIdx.x;
