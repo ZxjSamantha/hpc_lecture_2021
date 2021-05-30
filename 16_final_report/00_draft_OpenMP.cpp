@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
   vector<float> subB(N*N/size);
   vector<float> subC(N*N/size, 0);
   
-  #pragma omp parallel for num_threads(4)
+  //#pragma omp parallel for num_threads(4)
   for (int i=0; i<N; i++) {
     for (int j=0; j<N; j++) {
       A[N*i+j] = drand48();
@@ -30,17 +30,27 @@ int main(int argc, char** argv) {
   }
   int offset = N/size*rank; // begin = rank * (N/size) end = (rank + 1) * (N/size)
   
-  for (int i=0; i<N/size; i++)
-    for (int j=0; j<N; j++)
-      subA[N*i+j] = A[N*(i+offset)+j];
-  //#pragma omp parallel for
-  //  #pragma omp section 
-  for (int i=0; i<N; i++)
-    for (int j=0; j<N/size; j++)
-      subB[N/size*i+j] = B[N*i+j+offset];
-    //  }
-    //}
-  
+/* Parallel Section? */
+#pragma omp parallel
+{
+  #pragma omp sections
+  {
+    for (int i=0; i<N/size; i++){
+      for (int j=0; j<N; j++){
+        subA[N*i+j] = A[N*(i+offset)+j];
+      }
+    }
+  }
+ 
+  #pragma omp sections
+  {
+    for (int i=0; i<N; i++){
+      for (int j=0; j<N/size; j++){
+        subB[N/size*i+j] = B[N*i+j+offset];
+      }
+    }
+  }
+}
 
   int recv_from = (rank + 1) % size; //receive 
   int send_to = (rank - 1 + size) % size; //send 
@@ -79,15 +89,17 @@ int main(int argc, char** argv) {
   omp_set_num_threads(4);
   
   #pragma omp parallel for
-  for (int i=0; i<N; i++)
-    for (int j=0; j<N; j++)
+  for (int i=0; i<N; i++){
+    for (int j=0; j<N; j++){
     //for (int k=0; k<N; k++)
-      for (int k=0; k<N; k++)
+      for (int k=0; k<N; k++){
       //for (int j=0; j<N; j++)
         //#pragma omp parallel for num_threads(4) reduction(+:C[N*i+j])
         //#pragma omp parallel for reduction(+:C[N*i+j])
         C[N*i+j] -= A[N*i+k] * B[N*k+j];
-  
+      }
+    }
+  }
   double err = 0;
   for (int i=0; i<N; i++)
     for (int j=0; j<N; j++)
