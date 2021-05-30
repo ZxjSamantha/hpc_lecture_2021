@@ -41,7 +41,6 @@ int main(int argc, char** argv) {
   //int i,j; 
   #pragma omp sections 
   {
-    //#pragma omp for parallel collapse(2)
     for (int i=0; i<N/size; i++){
       for (int j=0; j<N; j++){
         subA[N*i+j] = A[N*(i+offset)+j];
@@ -63,7 +62,6 @@ int main(int argc, char** argv) {
   int send_to = (rank - 1 + size) % size; //send 
 
   double comp_time = 0, comm_time = 0;
-  //#pragma omp parallel{
   for(int irank=0; irank<size; irank++) {
     auto tic = chrono::steady_clock::now(); // record time 
     offset = N/size*((rank+irank) % size);
@@ -95,14 +93,10 @@ int main(int argc, char** argv) {
   
   omp_set_num_threads(4); // seems not matter? 
   
-  #pragma omp parallel for 
+  #pragma omp parallel for //collapse(2)
   for (int i=0; i<N; i++){
     for (int j=0; j<N; j++){
-    //for (int k=0; k<N; k++)
       for (int k=0; k<N; k++){
-      //for (int j=0; j<N; j++)
-        //#pragma omp parallel for num_threads(4) reduction(+:C[N*i+j])
-        //#pragma omp parallel for reduction(+:C[N*i+j])
         C[N*i+j] -= A[N*i+k] * B[N*k+j];
       }
     }
