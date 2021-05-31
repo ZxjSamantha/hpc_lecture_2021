@@ -8,6 +8,7 @@
 #include <immintrin.h>
 using namespace std;
 //bash 00_run.sh 
+//1~ GFlops -> 20~ GFlops
 
 int main(int argc, char** argv) {
   int size, rank;
@@ -15,7 +16,10 @@ int main(int argc, char** argv) {
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  const int N = 256;
+  //const int N = 256;
+  //const int N = 512; 
+  const int N = 1024;
+  //const int N = 4096; 
   vector<float> A(N*N);
   vector<float> B(N*N);
   vector<float> C(N*N, 0);
@@ -76,7 +80,6 @@ int main(int argc, char** argv) {
           //#pragma omp parallel for reduction(+:temp)
           for (kc=0; kc<N; kc++){
             temp += subA[N*ic+kc] * subB[N/size*kc+jc];
-            //subC[N*i+j+offset] += subA[N*i+k] * subB[N/size*k+j];
             }  
           subC[N*ic+jc+offset] = temp; 
         }
