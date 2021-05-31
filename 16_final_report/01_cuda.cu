@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <chrono>
 using namespace std;
-//bash 01_run_cuda
+//bash 01_run_cuda.sh
 //N = 256, 80~ GFlops
 //N = 512, 210~ GFlops
 //N = 1024, 350~ GFlops
