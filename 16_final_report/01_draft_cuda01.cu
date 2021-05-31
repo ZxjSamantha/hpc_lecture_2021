@@ -8,6 +8,7 @@ using namespace std;
 #define M 256
 //number of rows in the matrix 
 
+
 __global__ void matmul(float *A, float *B, float *C, int N){
     int i = blockIdx.y ; 
     int j = threadIdx.x + blockDim.x * blockIdx.x;
@@ -17,6 +18,25 @@ __global__ void matmul(float *A, float *B, float *C, int N){
     }
     C[N*i+j] = sum; 
 }
+
+
+/***
+__global__ void matmul(float *A, float *B, float *C, int N) {
+  int i = blockIdx.y;
+  int j = threadIdx.x + blockDim.x * blockIdx.x;
+  float sum = 0.0f;
+  extern __shared__ float A_s[];
+  for (int ks=0; ks<N; ks+=blockDim.x) {
+    __syncthreads();
+    A_s[threadIdx.x] = A[N*i+ks+threadIdx.x];
+    __syncthreads();
+    for (int k=ks; k<ks+blockDim.x; k++) {
+      sum += A_s[k-ks] * B[N*k+j];
+    }
+  }
+  C[N*i+j] = sum;
+}
+***/
 
 int main(int argc, char **argv){
     int mpisize, mpirank;

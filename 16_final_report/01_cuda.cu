@@ -4,9 +4,14 @@
 #include <cstdio>
 #include <chrono>
 using namespace std;
+//bash 01_run_cuda
+//N = 256, 80~ GFlops
+//N = 512, 210~ GFlops
+//N = 1024, 350~ GFlops
 
-#define M 256
+#define M 256 
 //number of rows in the matrix 
+// N >= M
 
 __global__ void matmul(float *A, float *B, float *C, int N){
     int i = blockIdx.y ; 
@@ -24,7 +29,8 @@ int main(int argc, char **argv){
     MPI_Comm_size(MPI_COMM_WORLD, &mpisize);
     MPI_Comm_rank(MPI_COMM_WORLD, &mpirank);
     
-    const int N = 256; 
+    //const int N = 512;
+    const int N = 1024; 
     int matsize = N * N * sizeof(float);
     float *A, *B, *C;   
     cudaMallocManaged(&A, matsize);
